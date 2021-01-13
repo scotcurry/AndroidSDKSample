@@ -2,12 +2,13 @@ import java.util.concurrent.TimeUnit
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'io.fabric'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 buildscript {
-    ext.kotlin_version = '1.3.61'
+    ext.kotlin_version = '1.4.21'
     repositories {
         google()
         mavenCentral()
@@ -19,11 +20,11 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:4.1.1'
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.7.5'
-        classpath 'io.fabric.tools:gradle:1.26.1'
         classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.3"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-android-extensions:$kotlin_version"
-        classpath 'com.google.gms:google-services:4.3.3'
+        classpath 'com.google.gms:google-services:4.3.4'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.4.1'
     }
 }
 android {
@@ -34,10 +35,11 @@ android {
         sourceCompatibility 1.8
         targetCompatibility 1.8
     }
+
     defaultConfig {
         applicationId "com.sample.airwatchsdk"
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 1
         versionName "1.0"
         multiDexEnabled true
@@ -143,7 +145,7 @@ android {
 
 repositories {
     flatDir { dirs 'libs' }
-    maven { url 'https://maven.fabric.io/public' }
+    google()
 }
 def privacyVersion = "1.5.0"
 apply plugin: 'kotlin-android-extensions'
@@ -152,11 +154,11 @@ apply plugin: 'com.google.gms.google-services'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     implementation ('com.jakewharton:butterknife:10.1.0'){
         exclude group: 'com.google.guava'
     }
@@ -164,23 +166,23 @@ dependencies {
         exclude group: 'com.google.guava'
     }
     implementation 'com.squareup.leakcanary:leakcanary-android:1.5.4'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
-        exclude group: 'com.google.guava'
-        transitive = true
+    implementation ('com.google.firebase:firebase-crashlytics:17.3.0'){
+        exclude module: 'okhttp'
     }
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
     implementation(name: "AWPrivacy-${privacyVersion}", ext: "aar")
-    implementation "androidx.room:room-ktx:2.2.4"
-    kapt "androidx.room:room-compiler:2.2.4"
-    implementation "com.google.firebase:firebase-messaging:17.3.4"
-    implementation 'com.google.firebase:firebase-core:16.0.6'
-    implementation 'com.google.firebase:firebase-iid:17.0.4'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.3'
+    implementation "androidx.room:room-ktx:2.2.6"
+    kapt "androidx.room:room-compiler:2.2.6"
+    implementation "com.google.firebase:firebase-messaging:21.0.1"
+    implementation 'com.google.firebase:firebase-core:18.0.0'
+    implementation 'com.google.firebase:firebase-iid:21.0.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.4'
     implementation 'org.koin:koin-core:2.1.0'
     implementation 'org.koin:koin-android:2.1.0'
     implementation 'org.koin:koin-android-viewmodel:2.1.0'
     //Integrate with sdk:
-    implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation(name: 'VisionUx-1.5.0.a', ext: 'aar')
     implementation 'net.zetetic:android-database-sqlcipher:4.4.1@aar'
     implementation(name: "AirWatchSDK-20.11", ext: "aar") //integrate with framework:
@@ -194,18 +196,18 @@ dependencies {
     implementation(name: 'AWComplianceLibrary-2.3.6', ext: 'aar')
     implementation "com.google.android.gms:play-services-safetynet:17.0.0"
     implementation 'androidx.legacy:legacy-support-v13:1.0.0'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.legacy:legacy-preference-v14:1.0.0'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.biometric:biometric:1.0.1'
-    implementation('androidx.work:work-runtime-ktx:2.3.3') {
+    implementation('androidx.work:work-runtime-ktx:2.4.0') {
         exclude group: 'com.google.guava'
     }
-    implementation 'androidx.security:security-crypto:1.0.0-rc02'
-    implementation "androidx.lifecycle:lifecycle-runtime:2.2.0"
+    implementation 'androidx.security:security-crypto:1.1.0-alpha03'
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.2.0"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     annotationProcessor ("androidx.lifecycle:lifecycle-compiler:2.2.0"){
         exclude group: 'com.google.guava'
@@ -226,22 +228,25 @@ dependencies {
     implementation('com.squareup.retrofit2:retrofit:2.7.1') {
         // exclude Retrofit’s OkHttp dependency module and define your own module import
         exclude module: 'okhttp'
+        exclude module: 'okio'
     }
 
     implementation('com.squareup.retrofit2:converter-gson:2.7.1') {
         exclude module: 'okhttp'
+        exclude module: 'okio'
     }
     implementation('com.squareup.okhttp3:logging-interceptor:3.4.1') {
         exclude module: 'okio'
         exclude module: 'okhttp'
     }
-
     //picasso
     implementation('com.squareup.picasso:picasso:2.71828') {
         exclude module: 'okhttp'
+        exclude module: 'okio'
     }
     implementation('com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0') {
         exclude module: 'okhttp'
+        exclude module: 'okio'
     }
     implementation("com.squareup.moshi:moshi-kotlin:1.8.0"){
         exclude group: 'com.squareup.okio', module: 'okio'
